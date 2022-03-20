@@ -1,57 +1,35 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:solar_system/add_planet.dart';
+import 'package:solar_system/custom_alert_dialog/adding_planet_dialog.dart';
+import 'package:solar_system/custom_alert_dialog/widgets/planet.dart';
 
 class SolarSystem extends StatefulWidget {
-  const SolarSystem({Key? key}) : super(key: key);
-
+  const SolarSystem({Key? key, required this.planets}) : super(key: key);
+  final List<PlanetWidget> planets;
   @override
   State<SolarSystem> createState() => _SolarSystemState();
 }
 
-class _SolarSystemState extends State<SolarSystem>
-    with TickerProviderStateMixin {
-  List<AddPlanet> planets = [];
-
-  int randWithoutZero() {
-    int res = Random().nextInt(10);
-    while (res == 0) {
-      res = Random().nextInt(10);
-    }
-    return res;
-  }
-
-  void addPlanet() {
-    planets.add(AddPlanet(
-        animationController: AnimationController(
-            vsync: this, duration: Duration(seconds: randWithoutZero())),
-        radiusPlanet: 30,
-        colorPlanet: Colors.red,
-        remotnessPlanet: 2,
-        speedRotation: 1));
-  }
-
+class _SolarSystemState extends State<SolarSystem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add Planet',
         onPressed: () {
-          setState(() {
-            addPlanet();
-          });
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AddingPlanetDialog(planets: widget.planets);
+              });
         },
         child: const Icon(Icons.add),
       ),
       body: Center(
         child: Stack(
           children: [
-            for (var i = 0; i < planets.length; i++)
-              Positioned(
-                left: 90,
-                top: 200,
-                child: planets[i],
+            for (var i = 0; i < widget.planets.length; i++)
+              Center(
+                child: widget.planets[i],
               ),
             Center(
               child: Container(
